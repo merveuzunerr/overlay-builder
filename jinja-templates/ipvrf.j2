@@ -1,0 +1,39 @@
+network-instance L3-{{ index }}-{{ ipvrf_name }} {
+        type ip-vrf
+        admin-state enable
+        description {{ netins_name }}
+        {% for irb_interface in irb_interface_list %}
+        interface {{ irb_interface }} {
+        }
+        {% endfor %}
+        vxlan-interface {{ vxlan_interface }} {
+        }
+        protocols {
+            bgp-evpn {
+                bgp-instance 1 {
+                    admin-state enable
+                    vxlan-interface {{ vxlan_interface }}
+                    evi {{ index }}
+                    ecmp 8
+                }
+            }
+            bgp-vpn {
+                bgp-instance 1 {
+                    route-target {
+                        export-rt target:65501:{{ index }}
+                        import-rt target:65501:{{ index }}
+                    }
+                }
+            }
+        }
+    }
+    tunnel-interface vxlan1 {
+        vxlan-interface {{ index }} {
+            type routed
+            ingress {
+                vni {{ index }}
+            }
+            egress {
+                source-ip use-system-ipv4-address
+            }
+        }

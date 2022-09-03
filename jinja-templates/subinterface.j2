@@ -1,0 +1,25 @@
+{% for breakoutid in breakoutidList %}
+interface ethernet-1/{{ portid }}/{{ breakoutid }} {
+    admin-state enable
+    vlan-tagging true
+    transceiver {
+        forward-error-correction rs-108
+    }
+    subinterface {{ vlanid }} {
+        type bridged
+        admin-state enable
+        vlan {
+            encap {
+{% if vlanid == 0 %}
+                untagged{
+                }
+{% else %}
+                single-tagged {
+                    vlan-id {{ vlanid }}
+                }
+{% endif %}
+            }
+        }
+    }
+}
+{% endfor %}

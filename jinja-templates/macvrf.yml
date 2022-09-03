@@ -1,0 +1,5 @@
+netins_name: L2-1-CBIS-Internal-API
+netins_type: macvrf
+interface_list: [irb0.1, ethernet-1/10/1, ethernet-1/11/2]
+index: 1
+vxlan_interface: vxlan1.1

@@ -1,0 +1,5 @@
+index: 10
+irb_v4_address: 10.100.100.10
+irb_v4_mask: 24
+irb_v6_address: 2001:bd1::1
+irb_v6_mask: 64

@@ -1,0 +1,61 @@
+{% set oct1, oct2, oct3, oct4 = irb_v4_address.split('.') %}
+    interface irb1 {
+        description "irb interface for ipvrf {{ macvrf_name }}"
+        admin-state enable
+        subinterface {{ index }} {
+            admin-state enable
+            ip-mtu 9394
+            ipv4 {
+                address {{ irb_v4_address }}/{{ irb_v4_mask }} {    
+                    anycast-gw true
+                    primary
+                }
+                arp {
+                    timeout 270
+                    learn-unsolicited true
+                    host-route {
+                        populate static {
+                        }
+                        populate dynamic {
+                        }
+                    }
+                    evpn {
+                        advertise static {
+                        }
+                        advertise dynamic {
+                        }
+                    }   
+                }
+            }
+            {% if irb_v6_address is defined %}
+            ipv6 {
+                address {{ irb_v6_address }}/{{ irb_v6_mask }} {
+                    anycast-gw true
+                    primary
+                }
+                neighbor-discovery {
+                    stale-time 270
+                    learn-unsolicited both
+                    host-route {
+                        populate static {
+                        }
+                        populate dynamic {
+                        }
+                    }
+                    evpn {
+                        advertise static {
+                        }
+                        advertise dynamic {
+                        }
+                    }
+                }
+            }
+            {% endif %}
+            anycast-gw {
+                anycast-gw-mac 06:00:{{ "%02x" | format( oct1 | int ) }}:{{ "%02x" | format( oct2 | int ) }}:{{ "%02x" | format( oct3 | int ) }}:{{ "%02x" | format( oct4 | int ) }}
+            }
+        }
+
+
+
+

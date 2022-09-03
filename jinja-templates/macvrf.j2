@@ -1,0 +1,54 @@
+network-instance L2-{{ index }}-{{ subnet_name }} {
+        type mac-vrf
+        admin-state enable
+        description {{ subnet_name }}
+        {% for edge_interface in edge_interface_list %}
+        interface ethernet-1/{{ edge_interface }} {
+        }
+        {% endfor %}
+        {% for irb_interface in irb_interface_list %}
+        interface {{ irb_interface }} {
+        }
+        {% endfor %}
+        vxlan-interface {{ vxlan_interface }} {
+        }
+        protocols {
+            bgp-evpn {
+                bgp-instance 1 {
+                    admin-state enable
+                    vxlan-interface {{ vxlan_interface }}
+                    evi {{ 10000+index }}
+                    ecmp 8
+                    routes {
+                        bridge-table {
+                            next-hop use-system-ipv4-address
+                            mac-ip {
+                                advertise true
+                            }
+                            inclusive-mcast {
+                                advertise true
+                            }
+                        }
+                    }
+                }
+            }
+            bgp-vpn {
+                bgp-instance 1 {
+                    route-target {
+                        export-rt target:65501:{{ 10000+index }}
+                        import-rt target:65501:{{ 10000+index }}
+                    }
+                }
+            }
+        }
+    }
+   tunnel-interface vxlan2 {
+        vxlan-interface {{ index }} {
+            type bridged
+            ingress {
+                vni {{ 10000+index }}
+            }
+            egress {
+                source-ip use-system-ipv4-address
+            }
+        }

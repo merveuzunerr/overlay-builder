@@ -1,0 +1,5 @@
+netins_name: OAM-VRF
+netins_type: ipvrf
+interface_list: [irb0.1, irb0.2, irb1.1]
+index: 100
+vxlan_interface: vxlan2.100
